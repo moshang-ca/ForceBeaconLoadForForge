@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.moshang.forcebeaconloadforforge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "forcebeaconloadforforge.refmap.json",
+  "mixins": [
+    "common.BeaconBlockEntityMixin",
+    "common.BlockMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
