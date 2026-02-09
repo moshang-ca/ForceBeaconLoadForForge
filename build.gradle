@@ -140,6 +140,10 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+
+    maven {
+        url "https://maven.blamejared.com"
+    }
 }
 
 dependencies {
@@ -167,6 +171,8 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
+    compileOnly fg.deobf("org.embeddedt:embeddium-1.20.1:0.3.28-beta.23+mc1.20.1")
+
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -178,7 +184,8 @@ tasks.named('processResources', ProcessResources).configure {
                              forge_version       : forge_version, forge_version_range: forge_version_range,
                              loader_version_range: loader_version_range,
                              mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
-                             mod_authors         : mod_authors, mod_description: mod_description,]
+                             mod_authors         : mod_authors, mod_description: mod_description,
+                             embeddium_version_range: embeddium_version_range]
 
     inputs.properties replaceProperties
 

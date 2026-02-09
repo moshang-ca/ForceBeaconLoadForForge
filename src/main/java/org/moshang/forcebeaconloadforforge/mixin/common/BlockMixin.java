@@ -27,9 +27,9 @@ public class BlockMixin {
     }
 
     @Inject(method = "destroy", at = @At("HEAD"))
-    private void updateBeaconDate(LevelAccessor pLevel, BlockPos pPos, BlockState pState, CallbackInfo ci) {
+    private void updateBeaconData(LevelAccessor pLevel, BlockPos pPos, BlockState pState, CallbackInfo ci) {
         if(pLevel instanceof ServerLevel serverLevel) {
-            ForceBeaconLoadForForge.getBeaconData(serverLevel).invalidate();
+            ForceBeaconLoadForForge.getBeaconData(serverLevel).remove(serverLevel, pPos);
         }
     }
 }

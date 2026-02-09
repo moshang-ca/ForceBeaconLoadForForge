@@ -42,9 +42,11 @@ public class LevelBeaconData extends SavedData {
     }
 
     public void remove(ServerLevel level, BlockPos pos) {
+        BeaconBlockEntity beacon = beacons.get(pos);
         if(beacons.remove(pos) != null) {
             setDirty();
             ForceBeaconLoadForForge.sendToAllPlayers(level);
+            System.out.printf("remove beacon %s\n", beacon.getBlockPos());
             lastSendTime = level.getGameTime();
         }
     }
@@ -52,9 +54,9 @@ public class LevelBeaconData extends SavedData {
     public void check(Level level) {
         beacons.entrySet().removeIf( entry -> {
             if(!level.isLoaded(entry.getKey())) return false;
-            else return level.getBlockEntity(entry.getKey()) != entry.getValue();
+            else return !(level.getBlockEntity(entry.getKey()) instanceof BeaconBlockEntity);
         } );
-        // Here are some conditional compiling or debugging codes in vanilla version.
+        // Here are some conditional compiling or debugging codes in fabric version.
     }
 
     public boolean isEmpty() {
@@ -62,7 +64,7 @@ public class LevelBeaconData extends SavedData {
     }
 
     public void invalidate() {
-        this.lastSendTime = 0L;
+        this.lastSendTime = 0;
     }
     public Map<BlockPos, BeaconBlockEntity> getBeacons() { return Collections.unmodifiableMap(beacons); }
 

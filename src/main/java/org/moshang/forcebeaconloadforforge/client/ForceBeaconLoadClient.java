@@ -4,15 +4,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.moshang.forcebeaconloadforforge.common.LevelBeaconData;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@OnlyIn(Dist.CLIENT)
 @SuppressWarnings("removal")
 public class ForceBeaconLoadClient {
     private static final Map<ResourceLocation, Map<BlockPos, BeaconBlockEntity>> beaconMaps = new ConcurrentHashMap<>();
@@ -24,21 +30,28 @@ public class ForceBeaconLoadClient {
         if(levelStr.isEmpty()) return;
         ResourceLocation level = new ResourceLocation(levelStr);
 
-        ListTag listTag = nbt.getList("beacons", 10);
-        Map<BlockPos, BeaconBlockEntity> beacons = new HashMap<>();
+        Map<BlockPos, BeaconBlockEntity> beacons = new LevelBeaconData(nbt).getBeacons();
 
-        for(int i = 0; i < listTag.size(); ++i) {
-            CompoundTag tag = listTag.getCompound(i);
-            BlockPos pos = new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z"));
-            BeaconBlockEntity beacon = new BeaconBlockEntity(pos, Blocks.BEACON.defaultBlockState());
-            beacon.load(tag);
-            beacons.put(pos, beacon);
-        }
         beaconMaps.put(level, beacons);
+        setLevel(Minecraft.getInstance().level);
+    }
 
-        ClientLevel clientLevel = Minecraft.getInstance().level;
-        if(clientLevel != null && clientLevel.dimension().location().equals(level)) {
-            beacons.values().forEach( beacon -> beacon.setLevel(clientLevel) );
-        }
+    @SubscribeEvent
+    public static void onClientPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event) {
+        beaconMaps.clear();
+    }
+
+    public static void setLevel(ClientLevel level) {
+        beaconMaps.forEach((dim, map) -> {
+            if(dim.equals(level.dimension().location())) {
+                map.forEach((pos, beacon) -> beacon.setLevel(level));
+            }
+        });
+    }
+
+    public static List<BeaconBlockEntity> getBeacons(Level level) {
+        if(level == null) return List.of();
+        var map = beaconMaps.getOrDefault(level.dimension().location(), new HashMap<>());
+        return map.values().stream().filter(entity -> entity.getLevel() == level).toList();
     }
 }

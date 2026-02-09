@@ -43,6 +43,14 @@ public class BeaconBlockEntityMixin implements IsLevelValid, HasLevelShrink, Upd
         return levels;
     }
 
+    @Inject(method = "tick", at = @At("TAIL"))
+    private static void invalidateBeaconPower(Level pLevel, BlockPos pPos, BlockState pState, BeaconBlockEntity pBlockEntity, CallbackInfo ci) {
+        if(!pLevel.isClientSide && pBlockEntity.levels <= 0) {
+            pBlockEntity.primaryPower = null;
+            pBlockEntity.secondaryPower = null;
+        }
+    }
+
     @Inject(method = "tick", at = @At("RETURN"))
     private static void updateBeaconData(Level pLevel, BlockPos pPos, BlockState pState, BeaconBlockEntity pBlockEntity, CallbackInfo ci){
         if(pLevel instanceof ServerLevel serverLevel) {
@@ -64,7 +72,7 @@ public class BeaconBlockEntityMixin implements IsLevelValid, HasLevelShrink, Upd
     }
 
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BeaconBlockEntity;applyEffects(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;ILnet/minecraft/world/effect/MobEffect;Lnet/minecraft/world/effect/MobEffect;)V"))
-    private static void notAddPlaterEffects(Level player, BlockPos player1, int d0, MobEffect i, MobEffect j) {}
+    private static void notAddPlayerEffects(Level player, BlockPos player1, int d0, MobEffect i, MobEffect j) {}
 
     @Redirect(method = "applyEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(D)Lnet/minecraft/world/phys/AABB;"))
     private static AABB changePlayerEffectDistance(AABB instance, double pValue) {

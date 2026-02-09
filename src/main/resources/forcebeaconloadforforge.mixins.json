@@ -9,6 +9,12 @@
     "common.BlockMixin"
   ],
   "client": [
+    "client.BeaconRendererMixin",
+    "client.GameRenderMixin",
+    "client.LevelRenderMixin",
+    "client.MinecraftRenderMixin",
+    "client.RenderSectionMixin",
+    "client.SodiumWorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
