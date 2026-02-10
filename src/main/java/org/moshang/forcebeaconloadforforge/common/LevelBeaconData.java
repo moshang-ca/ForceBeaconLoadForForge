@@ -42,11 +42,9 @@ public class LevelBeaconData extends SavedData {
     }
 
     public void remove(ServerLevel level, BlockPos pos) {
-        BeaconBlockEntity beacon = beacons.get(pos);
         if(beacons.remove(pos) != null) {
             setDirty();
             ForceBeaconLoadForForge.sendToAllPlayers(level);
-            System.out.printf("remove beacon %s\n", beacon.getBlockPos());
             lastSendTime = level.getGameTime();
         }
     }
