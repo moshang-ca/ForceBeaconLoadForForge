@@ -37,7 +37,7 @@ public class ForceBeaconLoadForForge {
         MinecraftForge.EVENT_BUS.addListener(ForceBeaconLoadForForge::onPlayerLoggedIn);
         MinecraftForge.EVENT_BUS.addListener(ForceBeaconLoadForForge::onPlayerRespawn);
         MinecraftForge.EVENT_BUS.addListener(ForceBeaconLoadForForge::onServerTick);
-        MinecraftForge.EVENT_BUS.addListener(ForceBeaconLoadClient::onClientPlayerLogin);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> MinecraftForge.EVENT_BUS.addListener(ForceBeaconLoadClient::onClientPlayerLogin));
 
         registerPacket();
     }
