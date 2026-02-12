@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.moshang.forcebeaconloadforforge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "common.BeaconBlockEntityMixin",
+    "common.BlockMixin"
+  ],
+  "client": [
+    "client.BeaconRendererMixin",
+    "client.GameRenderMixin",
+    "client.LevelRenderMixin",
+    "client.MinecraftRenderMixin",
+    "client.RenderSectionMixin",
+    "client.SodiumWorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
